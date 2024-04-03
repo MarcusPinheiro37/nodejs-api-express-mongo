@@ -5,5 +5,5 @@ import app from './src/app.js'
 const PORT = 3000;
 
 app.listen(PORT, () => {
-    log(chalk.green(`servidor tá on na porta ${PORT}`))
+    log(chalk.yellow(`servidor escutando na porta ${PORT}`))
 })
