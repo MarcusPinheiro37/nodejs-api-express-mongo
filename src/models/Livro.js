@@ -9,7 +9,7 @@ const livroSchema = new mongoose.Schema({
         type: Number,
         validate: {
             validator: Number.isInteger,
-            message: '{VALUE} is not an integer value'
+            message: '{VALUE} não é do tipo inteiro'
           }
     }
 }, {versionKey: false});
