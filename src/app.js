@@ -1,5 +1,16 @@
 import express from 'express';
-import {log} from 'console';
+import conectaDataBase from './config/dbConnect.js'
+import chalk from 'chalk';
+
+const conexao = await conectaDataBase()
+
+conexao.on("error", (err) => {
+    console.error(chalk.red("Erro de conexão: "), err)
+})
+
+conexao.once("open", () => {
+    console.log(chalk.green('Conexão com o banco efetuada com sucesso.'));
+})
 
 const app = express();
 app.use(express.json());
