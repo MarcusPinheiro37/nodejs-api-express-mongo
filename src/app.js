@@ -21,11 +21,6 @@ app.get("/", (req, res) => {
 
 });
 
-app.get("/livros", async (req, res) => {
-    const listaLivros = await livro.find({})
-    res.status(200).send(listaLivros)
-})
-
 app.get("/livros/:id", (req, res) => { // aqui, um get somente com o id do livro
     const index = buscaLivro(req.params.id);
     res.status(200).send(livros[index])
