@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const livroSchema = new mongoose.Schema({
     id: { type: mongoose.Schema.Types.ObjectId },
-    titulo: { type: String, required: true},
+    titulo: { type: String, required: [true, 'Título do livro é obrigatório']},
     editora: { type: String },
     preco: { type: Number },
     paginas: { 
@@ -12,7 +12,7 @@ const livroSchema = new mongoose.Schema({
             message: '{VALUE} não é do tipo inteiro.'
         }
     },
-    autor: {type: mongoose.Schema.Types.ObjectId, ref: 'autores', required: true},
+    autor: {type: mongoose.Schema.Types.ObjectId, ref: 'autores', required: [true, 'ID do autor é obrigatório']},
 }, {versionKey: false});
 
 const livro = mongoose.model('livros', livroSchema);
