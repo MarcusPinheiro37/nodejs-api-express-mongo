@@ -1,0 +1,217 @@
+openapi: 3.0.0
+info:
+  title: Livraria
+  description: API de Livraria que fiz na brincadeirinha
+  version: "1.0.0"
+servers:
+  - url: http://localhost:3000
+paths:
+  /livros:
+    get:
+      tags: 
+        - Livros
+      summary: Lista de todos os livros
+      responses:
+        '200':
+          description: Lista de livros
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Livro'
+    post:
+      tags: 
+        - Livros
+      summary: Adiciona um livro novo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Livro'
+      responses:
+        '201':
+          description: Livro Criado
+  /livros/busca:
+    get:
+      tags: 
+        - Livros
+      summary: Lista livros pela editora
+      parameters:
+        - in: query
+          name: editora
+          schema:
+            type: string
+          required: true
+          description: Nome da editora para filtrar os livros
+      responses:
+        '200':
+          description: Lista de livros filtrados pela editora
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Livro'
+  /livros/{id}:
+    get:
+      tags: 
+        - Livros
+      summary: Pega um livro pelo seu ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID do livro
+      responses:
+        '200':
+          description: Dados do livro
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Livro'
+    put:
+      tags: 
+        - Livros
+      summary: Atualiza um livro pelo seu ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID do livro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Livro'
+      responses:
+        '200':
+          description: Book updated
+    delete:
+      tags: 
+        - Livros
+      summary: Deleta um livro pelo seu ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID do livro
+      responses:
+        '204':
+          description: Livro deletado
+  /autores:
+    get:
+      tags: 
+        - Autores
+      summary: Lista de todos os autores
+      responses:
+        '200':
+          description: Uma lista dos autores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Autor'
+    post:
+      tags: 
+        - Autores
+      summary: Add a new author
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Autor'
+      responses:
+        '201':
+          description: Author created
+  /autores/{id}:
+    get:
+      tags: 
+        - Autores
+      summary: Get an author by their ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Author ID
+      responses:
+        '200':
+          description: Author data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Autor'
+    put:
+      tags: 
+        - Autores
+      summary: Update an author by their ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Author ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Autor'
+      responses:
+        '200':
+          description: Author updated
+    delete:
+      tags: 
+        - Autores
+      summary: Delete an author by their ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Author ID
+      responses:
+        '204':
+          description: Author deleted
+components:
+  schemas:
+    Livro:
+      type: object
+      properties:
+        _id:
+          type: string
+        titulo:
+          type: string
+        editora:
+          type: string
+        preco:
+          type: number
+        paginas:
+          type: integer
+        autor:
+          $ref: '#/components/schemas/Autor'
+    Autor:
+      type: object
+      properties:
+        nome:
+          type: string
+        sexo:
+          type: string
+        nacionalidade:
+          type: string
+        _id:
+          type: string
