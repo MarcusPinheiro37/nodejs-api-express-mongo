@@ -1,4 +1,5 @@
-import livro from '../models/Livro.js'
+import { autor } from '../models/Autor.js';
+import livro from '../models/Livro.js';
 
 class LivroController {
 
@@ -12,10 +13,14 @@ class LivroController {
     };
 
     static async adicionaLivros(req, res){
+        const novoLivro = req.body;
         try {
-            const novoLivro = await livro.create(req.body);
-
-            res.status(201).json({ message: 'Inserido com sucesso', livro: novoLivro });
+            const autorEncontrado = await autor.findById(novoLivro.autor);
+            const livroCompleto = {
+                ...novoLivro, autor: { ...autorEncontrado._doc }
+            }
+            const livroCriado = await livro.create(livroCompleto)
+            res.status(201).json({ message: 'Inserido com sucesso', livro: livroCriado });
         
         } catch(err) {
             res.status(500).json({ message: `${err.message} - falha ao cadastrar livro` });
@@ -29,16 +34,34 @@ class LivroController {
         } catch (err) {
             res.status(500).json({ message: `${err.message} - falha ao pesquisar livro` });
         }
-    }
+    };
 
-    static async atualizaLivro(req, res){
+    static async atualizaLivro(req, res) {
+        const atualizacao = req.body;
+        const id = req.params.id;
         try {
-            const atualizaLivro = await livro.findByIdAndUpdate(req.params.id, req.body, {returnDocument: 'after'});
-            res.status(200).json({ message: 'Atualizado com sucesso', livro: atualizaLivro })
+            let result = atualizacao;
+            
+            // Check if `autor` is provided in the update payload.
+            if (atualizacao.autor !== undefined) {
+                const autorEncontrado = await autor.findById(atualizacao.autor);
+                
+                // Make sure an author was found before attempting to use it.
+                if (autorEncontrado) {
+                    result = { ...atualizacao, autor: { ...autorEncontrado._doc } };
+                } else {
+                    // Handle the case where an author ID is provided but no author is found.
+                    return res.status(404).json({ message: 'Autor não encontrado' });
+                }
+            }
+            
+            const atualizaLivro = await livro.findByIdAndUpdate(id, result, { returnDocument: 'after' });
+            res.status(200).json({ message: 'Atualizado com sucesso', livro: atualizaLivro });
         } catch (err) {
-            res.status(500).json({ message :  `${err.message} - falha ao atualizar livro`})
+            res.status(500).json({ message: `${err.message} - falha ao atualizar livro` });
         }
-    }
+    };
+    
 
     static async deletaLivro(req, res){
         try {
@@ -46,6 +69,16 @@ class LivroController {
             res.status(200).json({ message: 'Excluído com sucesso', livro: deletaLivro })
         } catch (err) {
             res.status(500).json({ message :  `${err.message} - falha ao deletar livro`})
+        }
+    };
+
+    static async listarLivrosEditora(req,res){
+        const editora = req.query.editora;
+        try {
+            const livroPorEditora = await livro.find({ editora: editora });
+            res.status(200).json(livroPorEditora)            
+        } catch (err) {
+            res.status(500).json({ message :  `${err.message} - falha na busca`})
         }
     }
 
