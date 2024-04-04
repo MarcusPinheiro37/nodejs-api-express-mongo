@@ -1,4 +1,4 @@
-import { autor } from '../models/Autor.js'
+import autor from '../models/Autor.js'
 
 class AutorController {
 
@@ -8,6 +8,15 @@ class AutorController {
             res.status(200).json(listaAutores);
         } catch (err){
             res.status(500).json({ message: `${err.message} - falha ao listar autores` });
+        }
+    };
+    
+    static async buscaAutor(req, res){
+        try {
+            const listaAutor = await autor.findById(req.params.id);
+            res.status(200).json(listaAutor)
+        } catch (err) {
+            res.status(500).json({ message: `${err.message} - falha ao pesquisar autor` });
         }
     };
 
@@ -21,15 +30,6 @@ class AutorController {
             res.status(500).json({ message: `${err.message} - falha ao cadastrar autor` });
         }
     };
-
-    static async buscaAutor(req, res){
-        try {
-            const listaAutor = await autor.findById(req.params.id);
-            res.status(200).json(listaAutor)
-        } catch (err) {
-            res.status(500).json({ message: `${err.message} - falha ao pesquisar autor` });
-        }
-    }
 
     static async atualizaAutor(req, res){
         try {
