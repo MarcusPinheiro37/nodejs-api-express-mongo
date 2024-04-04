@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import autor from '../models/Autor.js';
 
 class AutorController {
@@ -13,19 +14,25 @@ class AutorController {
     
     static async buscaAutor(req, res){
         try {
-            const listaAutor = await autor.findById(req.params.id);
-            res.status(200).json(listaAutor);
+            const listaAutor = await autor.findById(req.params.id);            
+            if(listaAutor !== null){
+                res.status(200).json(listaAutor);
+            } else {
+                res.status(404).send({ message: 'Autor não encontrado' });
+            }
         } catch (err) {
-            res.status(500).json({ message: `${err.message} - falha ao pesquisar autor` });
+            if (err instanceof mongoose.Error.CastError){
+                res.status(400).send({ message: 'ID inválido' });
+            } else {
+                res.status(500).json({ message: `${err.message} - falha ao pesquisar autor` });
+            }
         }
     }
 
     static async adicionaAutores(req, res){
         try {
             const novoAutor = await autor.create(req.body);
-
-            res.status(201).json({ message: 'Inserido com sucesso', autor: novoAutor });
-        
+            res.status(201).json({ message: 'Inserido com sucesso', autor: novoAutor });        
         } catch(err) {
             res.status(500).json({ message: `${err.message} - falha ao cadastrar autor` });
         }
