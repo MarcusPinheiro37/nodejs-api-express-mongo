@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import livros from './livrosRoutes.js';
 import autores from './autoresRoutes.js';
-import documentacao from './docRout.js'
+import documentacao from './docRout.js';
 
 const routes = (app) => {
     app.use(cors());

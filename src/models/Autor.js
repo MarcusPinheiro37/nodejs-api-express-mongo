@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const autorSchema = new mongoose.Schema({
     id: { type: mongoose.Schema.Types.ObjectId },
@@ -7,6 +7,6 @@ const autorSchema = new mongoose.Schema({
     nacionalidade: { type: String }
 }, {versionKey: false});
 
-const autor = mongoose.model('autores', autorSchema)
+const autor = mongoose.model('autores', autorSchema);
 
-export default autor
+export default autor;

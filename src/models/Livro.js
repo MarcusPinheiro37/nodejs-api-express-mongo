@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const livroSchema = new mongoose.Schema({
     id: { type: mongoose.Schema.Types.ObjectId },
@@ -10,11 +10,11 @@ const livroSchema = new mongoose.Schema({
         validate: {
             validator: Number.isInteger,
             message: '{VALUE} não é do tipo inteiro.'
-          }
+        }
     },
     autor: {type: mongoose.Schema.Types.ObjectId, ref: 'autores', required: true},
 }, {versionKey: false});
 
-const livro = mongoose.model("livros", livroSchema);
+const livro = mongoose.model('livros', livroSchema);
 
 export default livro;
