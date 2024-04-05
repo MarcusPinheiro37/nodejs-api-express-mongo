@@ -10,7 +10,7 @@ export default function manipulaErros(err, req, res, next) {
     if (err instanceof mongoose.Error.CastError){
         new RequisicaoIncorreta().enviarResposta(res);
     } else if(err instanceof mongoose.Error.ValidationError) {
-        new ErrValidacao().enviarResposta(res);
+        new ErrValidacao(err).enviarResposta(res);
     } else if(err instanceof NaoEncontrado){
         err.enviarResposta(res);
     }else {
