@@ -1,9 +1,10 @@
 import express from 'express';
 import AutorController from '../controllers/autorController.js';
+import paginacaoOrd from '../middlewares/paginacao.js';
 
 const routes = express.Router();
 
-routes.get('/autores', AutorController.listaAutores);
+routes.get('/autores', AutorController.listaAutores, paginacaoOrd);
 
 routes.get('/autores/:id', AutorController.buscaAutor);
 

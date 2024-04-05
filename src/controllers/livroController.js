@@ -1,15 +1,12 @@
-import NaoEncontrado from '../Erros/Erro404.js';
 import { autor, livros } from '../models/index.js';
-
+import NaoEncontrado from '../Erros/Erro404.js';
 class LivroController {
 
     static listaLivros = async (req, res, next) => {
         try {
-            const livrosResultado = await livros.find()
-                .populate('autor')
-                .exec();
-
-            res.status(200).json(livrosResultado);
+            const buscaLivros = livros.find().populate('autor');
+            req.resultado = buscaLivros;
+            next();
         } catch (erro) {
             next(erro);
         }
@@ -76,14 +73,13 @@ class LivroController {
     static listarLivrosFiltro = async (req, res, next) => {
         try {
             const busca = await processaBusca(req.query);
-            console.log(busca);
-            if (busca !== null ){
-                const livrosResultado = await livros.find(busca).populate('autor');
-                
-                if(livrosResultado.length){
-                    console.log(livrosResultado);
-                    res.status(200).json(livrosResultado);
-                } else{
+            if (busca !== null) {
+                const count = await livros.countDocuments(busca);
+                if (count > 0) {
+                    // Se há livros, prepara a query para paginação e passa para o próximo middleware
+                    req.resultado = livros.find(busca).populate('autor'); // Não execute aqui
+                    next();
+                } else {
                     next(new NaoEncontrado('Livro não encontrado'));
                 }
             } else {
