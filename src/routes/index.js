@@ -4,6 +4,8 @@ import livros from './livrosRoutes.js';
 import autores from './autoresRoutes.js';
 import documentacao from './docRout.js';
 import trataErro from '../middlewares/trataErros.js';
+import manipulador404 from '../middlewares/manipulador404.js';
+
 
 const routes = (app) => {
     app.use(cors());
@@ -11,9 +13,12 @@ const routes = (app) => {
     app.route('/').get((req, res) => res.status(200).send('Curso Node JS'));
 
     app.use(express.json(), livros, autores, documentacao);
-
+    
+    app.use(manipulador404);
+    
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     app.use(trataErro);
+    
 };
 
 export default routes;
