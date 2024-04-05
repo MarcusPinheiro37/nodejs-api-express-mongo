@@ -18,7 +18,7 @@ class AutorController {
             if(listaAutor !== null){
                 res.status(200).json(listaAutor);
             } else {
-                next(new NaoEncontrado('ID do autor não localizado'));
+                next(new NaoEncontrado('ID do autor não encontrado.'));
             }
         } catch (err) {
             next(err);
@@ -37,7 +37,11 @@ class AutorController {
     static async atualizaAutor(req, res, next){
         try {
             const atualizaAutor = await autor.findByIdAndUpdate(req.params.id, req.body, {returnDocument: 'after'});
-            res.status(200).json({ message: 'Atualizado com sucesso', autor: atualizaAutor });
+            if(atualizaAutor !== null){
+                res.status(200).json({ message: 'Atualizado com sucesso', atualizaAutor });
+            } else {
+                next(new NaoEncontrado('ID do autor não encontrado.'));
+            }
         } catch (err) {
             next(err);
         }
@@ -46,7 +50,11 @@ class AutorController {
     static async deletaAutor(req, res, next){
         try {
             const deletaAutor = await autor.findByIdAndDelete(req.params.id, req.body);
-            res.status(200).json({ message: 'Excluído com sucesso', autor: deletaAutor });
+            if(deletaAutor !== null){
+                res.status(200).json({ message: 'Excluído com sucesso', deletaAutor });
+            } else {
+                next(new NaoEncontrado('ID do autor não encontrado.'));
+            }
         } catch (err) {
             next(err);
         }

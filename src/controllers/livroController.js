@@ -1,8 +1,9 @@
+import NaoEncontrado from '../Erros/Erro404.js';
 import livros from '../models/Livro.js';
 
 class LivroController {
 
-    static listaLivros = async (req, res) => {
+    static listaLivros = async (req, res, next) => {
         try {
             const livrosResultado = await livros.find()
                 .populate('autor')
@@ -10,25 +11,28 @@ class LivroController {
 
             res.status(200).json(livrosResultado);
         } catch (erro) {
-            res.status(500).json({ message: 'Erro interno no servidor' });
+            next(erro);
         }
     };
 
-    static buscaLivro = async (req, res) => {
+    static buscaLivro = async (req, res, next) => {
         try {
             const id = req.params.id;
 
             const livroResultados = await livros.findById(id)
                 .populate('autor', 'nome')
                 .exec();
-
-            res.status(200).send(livroResultados);
+            if(livroResultados !== null){
+                res.status(200).send(livroResultados);
+            } else{
+                next(new NaoEncontrado('ID do livro não encontrado.'));
+            }
         } catch (erro) {
-            res.status(400).send({message: `${erro.message} - Id do livro não localizado.`});
+            next(erro);
         }
     };
 
-    static adicionaLivros = async (req, res) => {
+    static adicionaLivros = async (req, res, next) => {
         try {
             let livro = new livros(req.body);
 
@@ -36,43 +40,52 @@ class LivroController {
 
             res.status(201).send(livroResultado.toJSON());
         } catch (erro) {
-            res.status(500).send({message: `${erro.message} - falha ao cadastrar livro.`});
+            next(erro);
         }
     };
 
-    static atualizaLivro = async (req, res) => {
+    static atualizaLivro = async (req, res, next) => {
+        try {
+            const id = req.params.id;
+            const atualizaLivro = await livros.findByIdAndUpdate(id, {$set: req.body}, {returnDocument: 'after'});
+            if(atualizaLivro !== null){
+                res.status(200).send({message: 'Livro atualizado com sucesso: ', atualizaLivro});
+            } else{
+                next(new NaoEncontrado('ID do livro não encontrado.'));
+            }
+        } catch (erro) {
+            next(erro);
+        }
+    };
+
+    static deletaLivro = async (req, res, next) => {
         try {
             const id = req.params.id;
 
-            await livros.findByIdAndUpdate(id, {$set: req.body});
-
-            res.status(200).send({message: 'Livro atualizado com sucesso'});
+            const deletaLivro = await livros.findByIdAndDelete(id);
+            if(deletaLivro !== null){
+                res.status(200).send({message: 'Livro removido com sucesso:', deletaLivro});
+            } else{
+                next(new NaoEncontrado('ID do livro não encontrado.'));
+            }
         } catch (erro) {
-            res.status(500).send({message: erro.message});
+            next(erro);
         }
     };
 
-    static deletaLivro = async (req, res) => {
-        try {
-            const id = req.params.id;
-
-            await livros.findByIdAndDelete(id);
-
-            res.status(200).send({message: 'Livro removido com sucesso'});
-        } catch (erro) {
-            res.status(500).send({message: erro.message});
-        }
-    };
-
-    static listarLivrosEditora = async (req, res) => {
+    static listarLivrosEditora = async (req, res, next) => {
         try {
             const editora = req.query.editora;
 
             const livrosResultado = await livros.find({'editora': editora});
-
-            res.status(200).send(livrosResultado);
+            if(livrosResultado.length){
+                console.log(livrosResultado);
+                res.status(200).send(livrosResultado);
+            } else{
+                next(new NaoEncontrado('Editora não encontrada'));
+            }
         } catch (erro) {
-            res.status(500).json({ message: 'Erro interno no servidor' });
+            next(erro);
         }
     };
 
